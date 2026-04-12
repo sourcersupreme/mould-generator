@@ -1,6 +1,5 @@
 def draw_border(c):
     width, height = c._pagesize
-
     margin = 20
     c.rect(margin, margin, width - 2*margin, height - 2*margin)
 
@@ -8,7 +7,6 @@ def draw_border(c):
 def draw_title_block(c):
     c.setFont("Helvetica", 10)
 
-    # Bottom right title block
     c.rect(800, 20, 300, 120)
 
     c.drawString(810, 120, "SHREE CHAMUNDA DIE & ENGINEERS")
