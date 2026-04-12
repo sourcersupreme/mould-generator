@@ -41,71 +41,90 @@ def generate_pdf(mould_type, cavities, rows, cols, template):
     file_path = "mould_design.pdf"
     c = canvas.Canvas(file_path)
 
-    # SETTINGS
-    length = template["length"]
-    width = template["width"]
-    wall = 10  # wall thickness
-    gap = 20
-    margin = 50
+    # PARAMETERS (based on your real drawings)
+    L = template["length"]
+    W = template["width"]
+    WALL = 10
+    GAP = 15
+    MARGIN = 40
+    DEPTH = 100
+    PLATE = 12
 
+    # ---------- TITLE ----------
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(180, 800, "MOULD DESIGN DRAWING")
+
+    # ---------- TOP VIEW ----------
     start_x = 50
     start_y = 650
 
-    # Title
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(160, 800, "MOULD DESIGN")
+    total_w = cols * (L + WALL) + (cols - 1) * GAP + 2 * MARGIN
+    total_h = rows * (W + WALL) + (rows - 1) * GAP + 2 * MARGIN
 
-    # Calculate total frame
-    total_width = cols * (length + 2*wall) + (cols - 1) * gap + 2 * margin
-    total_height = rows * (width + 2*wall) + (rows - 1) * gap + 2 * margin
+    c.drawString(start_x, start_y + 20, "TOP VIEW")
 
-    # Draw outer frame
+    # Outer frame
     c.setLineWidth(2)
-    c.rect(start_x, start_y - total_height, total_width, total_height)
+    c.rect(start_x, start_y - total_h, total_w, total_h)
 
-    count = 0
+    # Continuous cavity walls (IMPORTANT CHANGE)
+    c.setLineWidth(1)
 
     for r in range(rows):
         for col in range(cols):
-            if count >= cavities:
-                break
+            x = start_x + MARGIN + col * (L + GAP)
+            y = start_y - MARGIN - r * (W + GAP)
 
-            x = start_x + margin + col * (length + 2*wall + gap)
-            y = start_y - margin - r * (width + 2*wall + gap)
+            c.rect(x, y, L, W)
 
-            # OUTER cavity (mould steel)
-            c.setLineWidth(1.5)
-            c.rect(x, y, length + 2*wall, width + 2*wall)
+    # Internal partition walls (connect cavities)
+    for col in range(1, cols):
+        x = start_x + MARGIN + col * (L + GAP) - GAP/2
+        c.setLineWidth(2)
+        c.line(x, start_y - MARGIN, x, start_y - total_h + MARGIN)
 
-            # INNER cavity (actual brick space)
-            c.setLineWidth(1)
-            c.rect(x + wall, y + wall, length, width)
+    for r in range(1, rows):
+        y = start_y - MARGIN - r * (W + GAP) + GAP/2
+        c.line(start_x + MARGIN, y, start_x + total_w - MARGIN, y)
 
-            # SPECIAL SHAPES
-            if mould_type == "zigzag":
-                # draw zigzag line
-                for i in range(5):
-                    c.line(
-                        x + wall + i*40,
-                        y + wall,
-                        x + wall + (i+1)*40,
-                        y + wall + width
-                    )
+    # ---------- FRONT VIEW ----------
+    front_x = 50
+    front_y = 300
 
-            elif mould_type == "ishape":
-                # draw I shape
-                cx = x + wall + length/2
-                cy = y + wall + width/2
+    c.drawString(front_x, front_y + 20, "FRONT VIEW")
 
-                c.setLineWidth(1)
-                c.line(cx, y + wall, cx, y + wall + width)
-                c.line(cx - 20, cy, cx + 20, cy)
+    width_total = total_w
 
-            count += 1
+    # Bottom plate
+    c.setLineWidth(2)
+    c.rect(front_x, front_y, width_total, PLATE)
+
+    # Cavity depth
+    c.rect(front_x, front_y + PLATE, width_total, DEPTH)
+
+    # Top plate
+    c.rect(front_x, front_y + PLATE + DEPTH, width_total, PLATE)
+
+    # Vertical divisions (match cavities)
+    for col in range(1, cols):
+        x = front_x + col * (width_total / cols)
+        c.line(x, front_y + PLATE, x, front_y + PLATE + DEPTH)
+
+    # ---------- BOLT PATTERN (REALISTIC) ----------
+    bolt_y = front_y + PLATE + DEPTH + PLATE/2
+
+    for i in range(6):
+        bx = front_x + 50 + i * 80
+        c.circle(bx, bolt_y, 4)
+
+    # ---------- TEXT ----------
+    c.setFont("Helvetica", 10)
+    c.drawString(50, 100, f"Type: {mould_type}")
+    c.drawString(50, 85, f"Cavities: {cavities}")
+    c.drawString(50, 70, f"Layout: {rows} x {cols}")
 
     c.save()
     return file_path
-
 
 if __name__ == "__main__":
     app.run(debug=True)
