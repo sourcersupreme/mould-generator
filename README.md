@@ -1,15 +1,15 @@
-# Mould Design Generator
+# Mould Generator
 
-Simple web app to generate mould design PDFs.
+Generate fly ash brick mould drawings in PDF format.
 
-## Run Locally
+## Features
+- Brick mould generation
+- Engineering layout (Top, Front, Side view)
+- PDF export
+
+## Setup (Linux)
 
 ```bash
-git clone <your-repo>
-cd mould-generator
-
-python3 -m venv venv
-source venv/bin/activate
-
-pip install -r requirements.txt
-python app.py
+sudo apt update
+sudo apt install python3 python3-pip -y
+pip3 install -r requirements.txt
