@@ -38,90 +38,128 @@ def index():
 
 
 def generate_pdf(mould_type, cavities, rows, cols, template):
+    from reportlab.pdfgen import canvas
+
     file_path = "mould_design.pdf"
     c = canvas.Canvas(file_path)
 
-    # PARAMETERS (based on your real drawings)
-    L = template["length"]
-    W = template["width"]
-    WALL = 10
-    GAP = 15
-    MARGIN = 40
-    DEPTH = 100
+    # -----------------------------
+    # FIXED TEMPLATE SETTINGS
+    # -----------------------------
+    FRAME_WIDTH = 800
+    FRAME_HEIGHT = 400
+    MARGIN = 60
+
+    CAVITY_L = template["length"]
+    CAVITY_W = template["width"]
+
+    GAP = 20
     PLATE = 12
 
-    # ---------- TITLE ----------
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(180, 800, "MOULD DESIGN DRAWING")
-
-    # ---------- TOP VIEW ----------
     start_x = 50
-    start_y = 650
+    start_y = 700
 
-    total_w = cols * (L + WALL) + (cols - 1) * GAP + 2 * MARGIN
-    total_h = rows * (W + WALL) + (rows - 1) * GAP + 2 * MARGIN
+    # -----------------------------
+    # TITLE
+    # -----------------------------
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(200, 800, "MOULD DESIGN (TEMPLATE BASED)")
 
+    # -----------------------------
+    # TOP VIEW (LIKE YOUR PDF STYLE)
+    # -----------------------------
     c.drawString(start_x, start_y + 20, "TOP VIEW")
 
-    # Outer frame
+    # Outer Frame
     c.setLineWidth(2)
-    c.rect(start_x, start_y - total_h, total_w, total_h)
+    c.rect(start_x, start_y - FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT)
 
-    # Continuous cavity walls (IMPORTANT CHANGE)
-    c.setLineWidth(1)
+    # Inner working area
+    inner_x = start_x + MARGIN
+    inner_y = start_y - MARGIN
+
+    # Auto spacing inside fixed frame
+    available_w = FRAME_WIDTH - 2 * MARGIN
+    available_h = FRAME_HEIGHT - 2 * MARGIN
+
+    step_x = available_w / cols
+    step_y = available_h / rows
+
+    # -----------------------------
+    # DRAW CAVITIES (REALISTIC GRID)
+    # -----------------------------
+    count = 0
 
     for r in range(rows):
         for col in range(cols):
-            x = start_x + MARGIN + col * (L + GAP)
-            y = start_y - MARGIN - r * (W + GAP)
+            if count >= cavities:
+                break
 
-            c.rect(x, y, L, W)
+            cx = inner_x + col * step_x + (step_x - CAVITY_L) / 2
+            cy = inner_y - r * step_y - (step_y - CAVITY_W) / 2
 
-    # Internal partition walls (connect cavities)
+            # cavity box
+            c.setLineWidth(1.5)
+            c.rect(cx, cy, CAVITY_L, CAVITY_W)
+
+            count += 1
+
+    # -----------------------------
+    # INTERNAL PARTITION WALLS
+    # -----------------------------
+    c.setLineWidth(1)
+
     for col in range(1, cols):
-        x = start_x + MARGIN + col * (L + GAP) - GAP/2
-        c.setLineWidth(2)
-        c.line(x, start_y - MARGIN, x, start_y - total_h + MARGIN)
+        x = inner_x + col * step_x
+        c.line(x, start_y - MARGIN, x, start_y - FRAME_HEIGHT + MARGIN)
 
     for r in range(1, rows):
-        y = start_y - MARGIN - r * (W + GAP) + GAP/2
-        c.line(start_x + MARGIN, y, start_x + total_w - MARGIN, y)
+        y = inner_y - r * step_y
+        c.line(inner_x, y, start_x + FRAME_WIDTH - MARGIN, y)
 
-    # ---------- FRONT VIEW ----------
-    front_x = 50
-    front_y = 300
+    # -----------------------------
+    # BOLT HOLES (FIXED TEMPLATE)
+    # -----------------------------
+    bolt_r = 5
 
-    c.drawString(front_x, front_y + 20, "FRONT VIEW")
+    bolts = [
+        (start_x + 40, start_y - 40),
+        (start_x + FRAME_WIDTH - 40, start_y - 40),
+        (start_x + 40, start_y - FRAME_HEIGHT + 40),
+        (start_x + FRAME_WIDTH - 40, start_y - FRAME_HEIGHT + 40),
+    ]
 
-    width_total = total_w
+    for bx, by in bolts:
+        c.circle(bx, by, bolt_r)
 
-    # Bottom plate
-    c.setLineWidth(2)
-    c.rect(front_x, front_y, width_total, PLATE)
+    # -----------------------------
+    # FRONT VIEW (SIMPLE BUT REAL)
+    # -----------------------------
+    front_y = 250
 
-    # Cavity depth
-    c.rect(front_x, front_y + PLATE, width_total, DEPTH)
+    c.drawString(start_x, front_y + 20, "FRONT VIEW")
 
-    # Top plate
-    c.rect(front_x, front_y + PLATE + DEPTH, width_total, PLATE)
+    # bottom plate
+    c.rect(start_x, front_y, FRAME_WIDTH, PLATE)
 
-    # Vertical divisions (match cavities)
+    # cavity depth block
+    c.rect(start_x, front_y + PLATE, FRAME_WIDTH, 120)
+
+    # top plate
+    c.rect(start_x, front_y + PLATE + 120, FRAME_WIDTH, PLATE)
+
+    # vertical divisions
     for col in range(1, cols):
-        x = front_x + col * (width_total / cols)
-        c.line(x, front_y + PLATE, x, front_y + PLATE + DEPTH)
+        x = start_x + col * (FRAME_WIDTH / cols)
+        c.line(x, front_y + PLATE, x, front_y + PLATE + 120)
 
-    # ---------- BOLT PATTERN (REALISTIC) ----------
-    bolt_y = front_y + PLATE + DEPTH + PLATE/2
-
-    for i in range(6):
-        bx = front_x + 50 + i * 80
-        c.circle(bx, bolt_y, 4)
-
-    # ---------- TEXT ----------
+    # -----------------------------
+    # INFO TEXT
+    # -----------------------------
     c.setFont("Helvetica", 10)
     c.drawString(50, 100, f"Type: {mould_type}")
     c.drawString(50, 85, f"Cavities: {cavities}")
-    c.drawString(50, 70, f"Layout: {rows} x {cols}")
+    c.drawString(50, 70, f"Auto Layout: {rows} x {cols}")
 
     c.save()
     return file_path
