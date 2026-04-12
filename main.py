@@ -7,14 +7,18 @@ from modules.zigzag import generate_zigzag_mould
 
 def generate():
     mould = mould_var.get()
-    cavities = cavity_var.get()
+    cavities = int(cavity_var.get())
 
     if mould == "Brick Mould":
-        generate_brick_mould("output.pdf", int(cavities))
-        messagebox.showinfo("Success", f"{mould} ({cavities} cavities) PDF Generated")
+        generate_brick_mould("output.pdf", cavities)
+
+    elif mould == "Zig-Zag Mould":
+        generate_zigzag_mould("output.pdf", cavities)
 
     else:
-        messagebox.showwarning("Error", "This mould type not implemented yet")
+        messagebox.showwarning("Error", "Not implemented")
+
+    messagebox.showinfo("Success", "PDF Generated")
 
 
 root = tk.Tk()
