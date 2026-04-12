@@ -16,21 +16,19 @@ def get_grid(cavities):
     return mapping.get(cavities, (2, 4))
 
 
-def draw_top_view(c, cavities):
-    rows, cols = get_grid(cavities)
+def draw_centered_plate(c, rows, cols):
+    page_w, page_h = c._pagesize
 
-    plate_w = 600
-    plate_h = 300
+    plate_w = 700
+    plate_h = 350
 
-    start_x = 200
-    start_y = 350
+    start_x = (page_w - plate_w) / 2
+    start_y = (page_h - plate_h) / 2 + 100
 
-    # Outer plate
     c.rect(start_x, start_y, plate_w, plate_h)
 
-    # Dynamic cavity size
-    padding = 20
-    gap = 10
+    padding = 25
+    gap = 12
 
     cell_w = (plate_w - 2*padding - (cols-1)*gap) / cols
     cell_h = (plate_h - 2*padding - (rows-1)*gap) / rows
@@ -42,22 +40,13 @@ def draw_top_view(c, cavities):
             c.rect(x, y, cell_w, cell_h)
 
 
-def draw_front_view(c):
-    c.rect(200, 250, 600, 80)
-
-
-def draw_side_view(c):
-    c.rect(100, 350, 80, 300)
-
-
 def generate_brick_mould(filename, cavities):
     c = create_canvas(filename)
 
     draw_border(c)
     draw_title_block(c)
 
-    draw_top_view(c, cavities)
-    draw_front_view(c)
-    draw_side_view(c)
+    rows, cols = get_grid(cavities)
+    draw_centered_plate(c, rows, cols)
 
     save_canvas(c)
