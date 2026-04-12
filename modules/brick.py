@@ -2,6 +2,7 @@ from core.pdf_engine import create_canvas, save_canvas
 from templates.layout import draw_border, draw_title_block
 
 
+# Map cavities → grid layout
 def get_grid(cavities):
     mapping = {
         4: (2, 2),
@@ -19,34 +20,52 @@ def get_grid(cavities):
 def draw_centered_plate(c, rows, cols):
     page_w, page_h = c._pagesize
 
+    # Plate size (closer to your real PDF proportions)
     plate_w = 750
     plate_h = 300
 
+    # Center positioning
     start_x = (page_w - plate_w) / 2
-    start_y = (page_h - plate_h) / 2 + 100
+    start_y = (page_h - plate_h) / 2 + 80
 
+    # Outer plate
     c.rect(start_x, start_y, plate_w, plate_h)
 
-   padding = 15
+    # Spacing tuning (important for accuracy)
+    padding = 15
     gap = 8
 
-   cell_w = cell_w
-    cell_h = cell_h * 0.85   # make slightly rectangular
+    # Dynamic cavity size
+    cell_w = (plate_w - 2 * padding - (cols - 1) * gap) / cols
+    cell_h = (plate_h - 2 * padding - (rows - 1) * gap) / rows
 
+    # Make cavities slightly rectangular (like real bricks)
+    cell_h = cell_h * 0.85
+
+    # Center vertically after height adjustment
+    total_h = rows * cell_h + (rows - 1) * gap
+    offset_y = (plate_h - total_h) / 2
+
+    # Draw cavities
     for r in range(rows):
         for col in range(cols):
             x = start_x + padding + col * (cell_w + gap)
-            y = start_y + padding + r * (cell_h + gap)
+            y = start_y + offset_y + r * (cell_h + gap)
             c.rect(x, y, cell_w, cell_h)
 
 
 def generate_brick_mould(filename, cavities):
     c = create_canvas(filename)
 
+    # Layout
     draw_border(c)
     draw_title_block(c)
 
+    # Grid logic
     rows, cols = get_grid(cavities)
+
+    # Draw main mould
     draw_centered_plate(c, rows, cols)
 
+    # Save PDF
     save_canvas(c)
