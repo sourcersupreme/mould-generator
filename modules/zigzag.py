@@ -2,8 +2,8 @@ from core.pdf_engine import create_canvas, save_canvas
 from templates.layout import draw_border, draw_title_block
 
 
-ZIG_W = 140
-ZIG_H = 65
+ZIG_W = 120
+ZIG_H = 70
 
 
 def get_grid(cavities):
@@ -18,16 +18,14 @@ def get_grid(cavities):
     return mapping.get(cavities, (2, 4))
 
 
-draw_zig(c, x, y, ZIG_W, ZIG_H)
-    """
-    Accurate 2-peak zig-zag (matches your PDF style)
-    """
+def draw_zig(c, x, y, w, h):
+    # Accurate 2-peak zig-zag
 
-    step = w / 4  # divide into 4 segments
+    step = w / 4
 
     path = c.beginPath()
 
-    # Bottom edge with TWO peaks
+    # Bottom with 2 peaks
     path.moveTo(x, y)
     path.lineTo(x + step, y + h * 0.35)
     path.lineTo(x + 2 * step, y)
@@ -37,7 +35,7 @@ draw_zig(c, x, y, ZIG_W, ZIG_H)
     # Right side
     path.lineTo(x + w, y + h)
 
-    # Top edge mirrored (inverse peaks)
+    # Top mirrored
     path.lineTo(x + 3 * step, y + h * 0.65)
     path.lineTo(x + 2 * step, y + h)
     path.lineTo(x + step, y + h * 0.65)
@@ -46,17 +44,18 @@ draw_zig(c, x, y, ZIG_W, ZIG_H)
     path.close()
     c.drawPath(path)
 
+
 def draw_plate(c, rows, cols):
     page_w, page_h = c._pagesize
 
-    gap = 10
-    padding = 20
+    gap = 8
+    padding = 18
 
     plate_w = cols * ZIG_W + (cols - 1) * gap + 2 * padding
     plate_h = rows * ZIG_H + (rows - 1) * gap + 2 * padding
 
     start_x = (page_w - plate_w) / 2
-    start_y = (page_h - plate_h) / 2 + 80
+    start_y = (page_h - plate_h) / 2 + 60
 
     # Outer plate
     c.rect(start_x, start_y, plate_w, plate_h)
@@ -67,7 +66,7 @@ def draw_plate(c, rows, cols):
             x = start_x + padding + col * (ZIG_W + gap)
             y = start_y + padding + r * (ZIG_H + gap)
 
-            draw_single_zig(c, x, y, ZIG_W, ZIG_H)
+            draw_zig(c, x, y, ZIG_W, ZIG_H)
 
 
 def generate_zigzag_mould(filename, cavities):
