@@ -30,8 +30,8 @@ def draw_centered_plate(c, rows, cols):
    padding = 15
     gap = 8
 
-    cell_w = (plate_w - 2*padding - (cols-1)*gap) / cols
-    cell_h = (plate_h - 2*padding - (rows-1)*gap) / rows
+   cell_w = cell_w
+    cell_h = cell_h * 0.85   # make slightly rectangular
 
     for r in range(rows):
         for col in range(cols):
