@@ -1,39 +1,46 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from modules.brick import generate_brick_mould
+# later: zigzag, ishape
 
 
 def generate():
-    mould_type = mould_var.get()
+    mould = mould_var.get()
+    cavities = cavity_var.get()
 
-    if mould_type == "Brick Mould":
-        generate_brick_mould("output.pdf")
-        messagebox.showinfo("Success", "PDF Generated: output.pdf")
+    if mould == "Brick Mould":
+        generate_brick_mould("output.pdf", int(cavities))
+        messagebox.showinfo("Success", f"{mould} ({cavities} cavities) PDF Generated")
 
     else:
-        messagebox.showwarning("Error", "Invalid selection")
+        messagebox.showwarning("Error", "This mould type not implemented yet")
 
 
-# GUI Window
 root = tk.Tk()
 root.title("Mould Generator")
-root.geometry("400x250")
-root.resizable(False, False)
+root.geometry("420x300")
 
-# Title
 title = tk.Label(root, text="Mould Generator", font=("Arial", 16, "bold"))
-title.pack(pady=15)
+title.pack(pady=10)
 
-# Dropdown
+# Mould type
+tk.Label(root, text="Select Mould Type").pack()
 mould_var = tk.StringVar()
-dropdown = ttk.Combobox(root, textvariable=mould_var, state="readonly")
-dropdown['values'] = ("Brick Mould",)
-dropdown.current(0)
-dropdown.pack(pady=10)
+mould_dropdown = ttk.Combobox(root, textvariable=mould_var, state="readonly")
+mould_dropdown['values'] = ("Brick Mould", "Zig-Zag Mould", "I-Shape Mould")
+mould_dropdown.current(0)
+mould_dropdown.pack(pady=5)
+
+# Cavities
+tk.Label(root, text="Select Cavities").pack()
+cavity_var = tk.StringVar()
+cavity_dropdown = ttk.Combobox(root, textvariable=cavity_var, state="readonly")
+cavity_dropdown['values'] = ("4", "6", "8", "9", "10", "12", "14", "24")
+cavity_dropdown.current(2)
+cavity_dropdown.pack(pady=5)
 
 # Button
-generate_btn = tk.Button(root, text="Generate PDF", command=generate, bg="green", fg="white", width=20)
-generate_btn.pack(pady=20)
+btn = tk.Button(root, text="Generate PDF", command=generate, bg="green", fg="white")
+btn.pack(pady=20)
 
-# Run
 root.mainloop()
