@@ -19,16 +19,16 @@ def get_grid(cavities):
 def draw_centered_plate(c, rows, cols):
     page_w, page_h = c._pagesize
 
-    plate_w = 700
-    plate_h = 350
+    plate_w = 750
+    plate_h = 300
 
     start_x = (page_w - plate_w) / 2
     start_y = (page_h - plate_h) / 2 + 100
 
     c.rect(start_x, start_y, plate_w, plate_h)
 
-    padding = 25
-    gap = 12
+   padding = 15
+    gap = 8
 
     cell_w = (plate_w - 2*padding - (cols-1)*gap) / cols
     cell_h = (plate_h - 2*padding - (rows-1)*gap) / rows
