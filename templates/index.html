@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mould Generator</title>
+</head>
+<body>
+
+<h2>MOULD DESIGN GENERATOR</h2>
+
+<form method="POST">
+
+    <label>Mould Type:</label>
+    <select name="mould">
+        <option value="brick">Brick</option>
+        <option value="zigzag">Zig-Zag</option>
+        <option value="ishape">I-Shape</option>
+    </select>
+
+    <br><br>
+
+    <label>Cavities:</label>
+    <select name="cavities">
+        <option>3</option>
+        <option>4</option>
+        <option>6</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>12</option>
+    </select>
+
+    <br><br>
+
+    <label>Layout:</label>
+    <select name="layout">
+        <option value="1x3">1 x 3</option>
+        <option value="2x2">2 x 2</option>
+        <option value="2x3">2 x 3</option>
+        <option value="2x4">2 x 4</option>
+        <option value="3x3">3 x 3</option>
+        <option value="3x4">3 x 4</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Generate PDF</button>
+
+</form>
+
+</body>
+</html>
