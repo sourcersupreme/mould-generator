@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from modules.brick import generate_brick_mould
+from modules.zigzag import generate_zigzag_mould
 # later: zigzag, ishape
 
 
