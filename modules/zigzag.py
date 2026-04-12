@@ -15,49 +15,41 @@ def get_grid(cavities):
 
 
 def draw_zigzag_shape(c, x, y, w, h):
-    # Create zig pattern inside rectangle
-    step = w / 6
-
-    points = [
-        (x, y),
-        (x + step, y + h*0.3),
-        (x + 2*step, y),
-        (x + 3*step, y + h*0.3),
-        (x + 4*step, y),
-        (x + 5*step, y + h*0.3),
-        (x + w, y),
-        (x + w, y + h),
-        (x + 5*step, y + h*0.7),
-        (x + 4*step, y + h),
-        (x + 3*step, y + h*0.7),
-        (x + 2*step, y + h),
-        (x + step, y + h*0.7),
-        (x, y + h),
-    ]
+    mid_x = x + w / 2
 
     path = c.beginPath()
-    path.moveTo(*points[0])
 
-    for p in points[1:]:
-        path.lineTo(*p)
+    # Bottom edge
+    path.moveTo(x, y)
+    path.lineTo(mid_x, y + h * 0.4)   # SINGLE PEAK
+    path.lineTo(x + w, y)
 
+    # Right side
+    path.lineTo(x + w, y + h)
+
+    # Top edge (mirror)
+    path.lineTo(mid_x, y + h * 0.6)
+    path.lineTo(x, y + h)
+
+    # Close
     path.close()
+
     c.drawPath(path)
 
 
 def draw_plate(c, rows, cols):
     page_w, page_h = c._pagesize
 
-    plate_w = 700
-    plate_h = 350
+    plate_w = 750
+    plate_h = 300
 
     start_x = (page_w - plate_w) / 2
     start_y = (page_h - plate_h) / 2 + 100
 
     c.rect(start_x, start_y, plate_w, plate_h)
 
-    padding = 25
-    gap = 12
+    padding = 15
+    gap = 8
 
     cell_w = (plate_w - 2*padding - (cols-1)*gap) / cols
     cell_h = (plate_h - 2*padding - (rows-1)*gap) / rows
