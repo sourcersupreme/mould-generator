@@ -3,20 +3,18 @@ from templates.layout import draw_border, draw_title_block
 
 
 def draw_top_view(c):
-    # Outer plate
     c.rect(200, 300, 600, 300)
 
-    # Inner cavities (grid)
     x_start = 220
     y_start = 320
-    width = 120
-    height = 120
+    w = 120
+    h = 120
 
     for row in range(2):
         for col in range(4):
             x = x_start + col * 140
             y = y_start + row * 140
-            c.rect(x, y, width, height)
+            c.rect(x, y, w, h)
 
 
 def draw_front_view(c):
@@ -30,11 +28,9 @@ def draw_side_view(c):
 def generate_brick_mould(filename):
     c = create_canvas(filename)
 
-    # Layout
     draw_border(c)
     draw_title_block(c)
 
-    # Views
     draw_top_view(c)
     draw_front_view(c)
     draw_side_view(c)
