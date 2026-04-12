@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from modules.brick import generate_brick_mould
 from modules.zigzag import generate_zigzag_mould
+import datetime
 # later: zigzag, ishape
 
 
@@ -9,17 +10,20 @@ def generate():
     mould = mould_var.get()
     cavities = int(cavity_var.get())
 
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{mould.replace(' ', '_')}_{cavities}_{timestamp}.pdf"
+
     if mould == "Brick Mould":
-        generate_brick_mould("output.pdf", cavities)
+        generate_brick_mould(filename, cavities)
 
     elif mould == "Zig-Zag Mould":
-        generate_zigzag_mould("output.pdf", cavities)
+        generate_zigzag_mould(filename, cavities)
 
     else:
         messagebox.showwarning("Error", "Not implemented")
+        return
 
-    messagebox.showinfo("Success", "PDF Generated")
-
+    messagebox.showinfo("Success", f"Saved as {filename}")
 
 root = tk.Tk()
 root.title("Mould Generator")
