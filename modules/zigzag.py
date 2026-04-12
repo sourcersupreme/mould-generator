@@ -18,32 +18,33 @@ def get_grid(cavities):
     return mapping.get(cavities, (2, 4))
 
 
-def draw_single_zig(c, x, y, w, h):
+def draw_zig(c, x, y, w, h):
     """
-    Clean SINGLE PEAK zig-zag (like your PDF)
+    Accurate 2-peak zig-zag (matches your PDF style)
     """
 
-    peak_y_bottom = y + h * 0.35
-    peak_y_top = y + h * 0.65
-    mid_x = x + w / 2
+    step = w / 4  # divide into 4 segments
 
     path = c.beginPath()
 
-    # Bottom edge with single peak
+    # Bottom edge with TWO peaks
     path.moveTo(x, y)
-    path.lineTo(mid_x, peak_y_bottom)
+    path.lineTo(x + step, y + h * 0.35)
+    path.lineTo(x + 2 * step, y)
+    path.lineTo(x + 3 * step, y + h * 0.35)
     path.lineTo(x + w, y)
 
     # Right side
     path.lineTo(x + w, y + h)
 
-    # Top edge mirrored
-    path.lineTo(mid_x, peak_y_top)
+    # Top edge mirrored (inverse peaks)
+    path.lineTo(x + 3 * step, y + h * 0.65)
+    path.lineTo(x + 2 * step, y + h)
+    path.lineTo(x + step, y + h * 0.65)
     path.lineTo(x, y + h)
 
     path.close()
     c.drawPath(path)
-
 
 def draw_plate(c, rows, cols):
     page_w, page_h = c._pagesize
