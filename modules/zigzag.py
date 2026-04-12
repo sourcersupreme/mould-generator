@@ -2,6 +2,10 @@ from core.pdf_engine import create_canvas, save_canvas
 from templates.layout import draw_border, draw_title_block
 
 
+ZIG_W = 140
+ZIG_H = 65
+
+
 def get_grid(cavities):
     mapping = {
         4: (2, 2),
@@ -14,52 +18,55 @@ def get_grid(cavities):
     return mapping.get(cavities, (2, 4))
 
 
-def draw_zigzag_shape(c, x, y, w, h):
+def draw_single_zig(c, x, y, w, h):
+    """
+    Clean SINGLE PEAK zig-zag (like your PDF)
+    """
+
+    peak_y_bottom = y + h * 0.35
+    peak_y_top = y + h * 0.65
     mid_x = x + w / 2
 
     path = c.beginPath()
 
-    # Bottom edge
+    # Bottom edge with single peak
     path.moveTo(x, y)
-    path.lineTo(mid_x, y + h * 0.4)   # SINGLE PEAK
+    path.lineTo(mid_x, peak_y_bottom)
     path.lineTo(x + w, y)
 
     # Right side
     path.lineTo(x + w, y + h)
 
-    # Top edge (mirror)
-    path.lineTo(mid_x, y + h * 0.6)
+    # Top edge mirrored
+    path.lineTo(mid_x, peak_y_top)
     path.lineTo(x, y + h)
 
-    # Close
     path.close()
-
     c.drawPath(path)
 
 
 def draw_plate(c, rows, cols):
     page_w, page_h = c._pagesize
 
-    plate_w = 750
-    plate_h = 300
+    gap = 10
+    padding = 20
+
+    plate_w = cols * ZIG_W + (cols - 1) * gap + 2 * padding
+    plate_h = rows * ZIG_H + (rows - 1) * gap + 2 * padding
 
     start_x = (page_w - plate_w) / 2
-    start_y = (page_h - plate_h) / 2 + 100
+    start_y = (page_h - plate_h) / 2 + 80
 
+    # Outer plate
     c.rect(start_x, start_y, plate_w, plate_h)
 
-    padding = 15
-    gap = 8
-
-    cell_w = (plate_w - 2*padding - (cols-1)*gap) / cols
-    cell_h = (plate_h - 2*padding - (rows-1)*gap) / rows
-
+    # Draw zig cavities
     for r in range(rows):
         for col in range(cols):
-            x = start_x + padding + col * (cell_w + gap)
-            y = start_y + padding + r * (cell_h + gap)
+            x = start_x + padding + col * (ZIG_W + gap)
+            y = start_y + padding + r * (ZIG_H + gap)
 
-            draw_zigzag_shape(c, x, y, cell_w, cell_h)
+            draw_single_zig(c, x, y, ZIG_W, ZIG_H)
 
 
 def generate_zigzag_mould(filename, cavities):
