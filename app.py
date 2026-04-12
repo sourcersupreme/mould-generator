@@ -41,31 +41,28 @@ def generate_pdf(mould_type, cavities, rows, cols, template):
     file_path = "mould_design.pdf"
     c = canvas.Canvas(file_path)
 
-    # Title
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(180, 800, "MOULD DESIGN DRAWING")
-
-    c.setFont("Helvetica", 12)
-    c.drawString(50, 760, f"Type: {mould_type}")
-    c.drawString(50, 740, f"Cavities: {cavities}")
-    c.drawString(50, 720, f"Layout Auto: {rows} x {cols}")
-
+    # SETTINGS
     length = template["length"]
     width = template["width"]
-
-    # Calculate frame size
-    total_width = cols * length + (cols - 1) * GAP + 2 * MARGIN
-    total_height = rows * width + (rows - 1) * GAP + 2 * MARGIN
+    wall = 10  # wall thickness
+    gap = 20
+    margin = 50
 
     start_x = 50
-    start_y = 600
+    start_y = 650
+
+    # Title
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(160, 800, "MOULD DESIGN")
+
+    # Calculate total frame
+    total_width = cols * (length + 2*wall) + (cols - 1) * gap + 2 * margin
+    total_height = rows * (width + 2*wall) + (rows - 1) * gap + 2 * margin
 
     # Draw outer frame
     c.setLineWidth(2)
     c.rect(start_x, start_y - total_height, total_width, total_height)
 
-    # Draw cavities
-    c.setLineWidth(1)
     count = 0
 
     for r in range(rows):
@@ -73,35 +70,38 @@ def generate_pdf(mould_type, cavities, rows, cols, template):
             if count >= cavities:
                 break
 
-            x = start_x + MARGIN + col * (length + GAP)
-            y = start_y - MARGIN - r * (width + GAP)
+            x = start_x + margin + col * (length + 2*wall + gap)
+            y = start_y - margin - r * (width + 2*wall + gap)
 
-            c.rect(x, y, length, width)
+            # OUTER cavity (mould steel)
+            c.setLineWidth(1.5)
+            c.rect(x, y, length + 2*wall, width + 2*wall)
 
-            # Dimension text inside cavity
-            c.setFont("Helvetica", 8)
-            c.drawString(x + 5, y + width / 2, f"{length}x{width}")
+            # INNER cavity (actual brick space)
+            c.setLineWidth(1)
+            c.rect(x + wall, y + wall, length, width)
+
+            # SPECIAL SHAPES
+            if mould_type == "zigzag":
+                # draw zigzag line
+                for i in range(5):
+                    c.line(
+                        x + wall + i*40,
+                        y + wall,
+                        x + wall + (i+1)*40,
+                        y + wall + width
+                    )
+
+            elif mould_type == "ishape":
+                # draw I shape
+                cx = x + wall + length/2
+                cy = y + wall + width/2
+
+                c.setLineWidth(1)
+                c.line(cx, y + wall, cx, y + wall + width)
+                c.line(cx - 20, cy, cx + 20, cy)
 
             count += 1
-
-    # Draw bolt holes (4 corners)
-    c.setLineWidth(1)
-    bolt_r = 5
-
-    bolts = [
-        (start_x + BOLT_OFFSET, start_y - BOLT_OFFSET),
-        (start_x + total_width - BOLT_OFFSET, start_y - BOLT_OFFSET),
-        (start_x + BOLT_OFFSET, start_y - total_height + BOLT_OFFSET),
-        (start_x + total_width - BOLT_OFFSET, start_y - total_height + BOLT_OFFSET),
-    ]
-
-    for bx, by in bolts:
-        c.circle(bx, by, bolt_r)
-
-    # Outer dimensions
-    c.setFont("Helvetica", 10)
-    c.drawString(start_x, start_y + 10, f"Width: {total_width} mm")
-    c.drawString(start_x + total_width + 10, start_y - total_height / 2, f"Height: {total_height} mm")
 
     c.save()
     return file_path
