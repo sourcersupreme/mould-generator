@@ -18,7 +18,7 @@ def get_grid(cavities):
     return mapping.get(cavities, (2, 4))
 
 
-def draw_single_zig(c, x, y, w, h):
+draw_zig(c, x, y, ZIG_W, ZIG_H)
     """
     Accurate 2-peak zig-zag (matches your PDF style)
     """
