@@ -22,36 +22,48 @@ def get_grid(cavities):
 # 🔥 CORE: Accurate cavity shape
 def draw_zig_cavity(c, x, y, w, h):
     """
-    FINAL correct zig:
-    - angled (not steps)
-    - shallow (not triangle)
-    - matches real mould
+    FINAL PRODUCTION-LEVEL zig cavity
+    Matches real mould geometry closely
     """
 
-    zig = w * 0.12   # depth
+    zig = w * 0.10   # very shallow like real mould
     step = h / 4
 
     path = c.beginPath()
 
-    # Start top-left
+    # START top-left
     path.moveTo(x, y + h)
 
-    # Top edge
+    # TOP edge
     path.lineTo(x + w, y + h)
 
-    # RIGHT SIDE (smooth angled zig)
+    # RIGHT SIDE (controlled industrial zig)
+    path.lineTo(x + w, y + h - step*0.6)
     path.lineTo(x + w - zig, y + h - step)
-    path.lineTo(x + w, y + h - 2*step)
-    path.lineTo(x + w - zig, y + h - 3*step)
+
+    path.lineTo(x + w - zig, y + h - step*2 + step*0.6)
+    path.lineTo(x + w, y + h - step*2)
+
+    path.lineTo(x + w, y + step*0.6)
+    path.lineTo(x + w - zig, y + step)
+
+    path.lineTo(x + w - zig, y + step*2 - step*0.6)
     path.lineTo(x + w, y)
 
-    # Bottom
+    # BOTTOM edge
     path.lineTo(x, y)
 
-    # LEFT SIDE (mirror)
+    # LEFT SIDE (perfect mirror)
+    path.lineTo(x, y + step*0.6)
     path.lineTo(x + zig, y + step)
-    path.lineTo(x, y + 2*step)
-    path.lineTo(x + zig, y + 3*step)
+
+    path.lineTo(x + zig, y + step*2 - step*0.6)
+    path.lineTo(x, y + step*2)
+
+    path.lineTo(x, y + h - step*0.6)
+    path.lineTo(x + zig, y + h - step)
+
+    path.lineTo(x + zig, y + h - step*2 + step*0.6)
     path.lineTo(x, y + h)
 
     path.close()
@@ -60,8 +72,8 @@ def draw_zig_cavity(c, x, y, w, h):
 def draw_plate(c, rows, cols):
     page_w, page_h = c._pagesize
 
-    gap = 8
-    padding = 25
+    gap = 4
+    padding = 20
 
     # Plate size auto-calculated
     plate_w = cols * ZIG_W + (cols - 1) * gap + 2 * padding
