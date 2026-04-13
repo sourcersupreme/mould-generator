@@ -72,7 +72,7 @@ def draw_plate(c, rows, cols):
 
     # Draw cavities
     for r in range(rows):
-    for col in range(cols):
+        for col in range(cols):
         x = start_x + padding + col * (ZIG_W + gap)
         y = start_y + padding + r * (ZIG_H + gap)
 
