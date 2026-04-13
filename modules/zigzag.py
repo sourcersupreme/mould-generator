@@ -3,7 +3,7 @@ from templates.layout import draw_border, draw_title_block
 
 
 # Fixed cavity size (tuned to look like your mould)
-ZIG_W = 120
+zig = w * 0.08
 ZIG_H = 80
 
 
