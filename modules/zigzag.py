@@ -67,24 +67,22 @@ def draw_plate(c, rows, cols):
     start_x = (page_w - plate_w) / 2
     start_y = (page_h - plate_h) / 2 + 60
 
-    # Outer plate
     c.rect(start_x, start_y, plate_w, plate_h)
 
-    # Draw cavities
     for r in range(rows):
         for col in range(cols):
-        x = start_x + padding + col * (ZIG_W + gap)
-        y = start_y + padding + r * (ZIG_H + gap)
+            x = start_x + padding + col * (ZIG_W + gap)
+            y = start_y + padding + r * (ZIG_H + gap)
 
-        draw_zig_cavity(
-            c,
-            x,
-            y,
-            ZIG_W,
-            ZIG_H,
-            is_first=(col == 0),
-            is_last=(col == cols - 1)
-        )
+            draw_zig_cavity(
+                c,
+                x,
+                y,
+                ZIG_W,
+                ZIG_H,
+                is_first=(col == 0),
+                is_last=(col == cols - 1)
+            )
 
 
 def generate_zigzag_mould(filename, cavities):
