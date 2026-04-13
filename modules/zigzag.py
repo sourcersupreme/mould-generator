@@ -18,32 +18,38 @@ def get_grid(cavities):
     return mapping.get(cavities, (2, 4))
 
 
-def draw_zig_cavity(c, x, y, w, h):
+def draw_zig_cavity(c, x, y, w, h, is_first, is_last):
     zig = w * 0.10
     step = h / 4
 
     path = c.beginPath()
 
-    # Start
+    # START
     path.moveTo(x, y + h)
 
-    # Top
+    # TOP
     path.lineTo(x + w, y + h)
 
-    # Right zig
-    path.lineTo(x + w - zig, y + h - step)
-    path.lineTo(x + w, y + h - 2*step)
-    path.lineTo(x + w - zig, y + h - 3*step)
-    path.lineTo(x + w, y)
+    # RIGHT SIDE (only if not last)
+    if not is_last:
+        path.lineTo(x + w - zig, y + h - step)
+        path.lineTo(x + w, y + h - 2*step)
+        path.lineTo(x + w - zig, y + h - 3*step)
+        path.lineTo(x + w, y)
+    else:
+        path.lineTo(x + w, y)
 
-    # Bottom
+    # BOTTOM
     path.lineTo(x, y)
 
-    # Left zig
-    path.lineTo(x + zig, y + step)
-    path.lineTo(x, y + 2*step)
-    path.lineTo(x + zig, y + 3*step)
-    path.lineTo(x, y + h)
+    # LEFT SIDE (only if not first)
+    if not is_first:
+        path.lineTo(x + zig, y + step)
+        path.lineTo(x, y + 2*step)
+        path.lineTo(x + zig, y + 3*step)
+        path.lineTo(x, y + h)
+    else:
+        path.lineTo(x, y + h)
 
     path.close()
     c.drawPath(path)
@@ -66,11 +72,19 @@ def draw_plate(c, rows, cols):
 
     # Draw cavities
     for r in range(rows):
-        for col in range(cols):
-            x = start_x + padding + col * (ZIG_W + gap)
-            y = start_y + padding + r * (ZIG_H + gap)
+    for col in range(cols):
+        x = start_x + padding + col * (ZIG_W + gap)
+        y = start_y + padding + r * (ZIG_H + gap)
 
-            draw_zig_cavity(c, x, y, ZIG_W, ZIG_H)
+        draw_zig_cavity(
+            c,
+            x,
+            y,
+            ZIG_W,
+            ZIG_H,
+            is_first=(col == 0),
+            is_last=(col == cols - 1)
+        )
 
 
 def generate_zigzag_mould(filename, cavities):
