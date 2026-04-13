@@ -22,33 +22,36 @@ def get_grid(cavities):
 # 🔥 CORE: Accurate cavity shape
 def draw_zig_cavity(c, x, y, w, h):
     """
-    Draw ONE zig-zag cavity like real mould:
-    - Straight top & bottom
-    - Zig on left & right edges only
+    Final accurate zig cavity:
+    - shallow zig (like real mould)
+    - not triangular
+    - more industrial look
     """
 
+    zig_depth = w * 0.12   # how far zig goes inside
     step = h / 4
-    offset = w * 0.18  # controls zig depth
 
     path = c.beginPath()
 
-    # Top edge
+    # Top left
     path.moveTo(x, y + h)
+
+    # Top edge
     path.lineTo(x + w, y + h)
 
-    # Right zig (downwards)
-    path.lineTo(x + w - offset, y + h - step)
-    path.lineTo(x + w, y + h - 2 * step)
-    path.lineTo(x + w - offset, y + h - 3 * step)
+    # Right side (DOWN with shallow zig)
+    path.lineTo(x + w - zig_depth, y + h - step)
+    path.lineTo(x + w, y + h - 2*step)
+    path.lineTo(x + w - zig_depth, y + h - 3*step)
     path.lineTo(x + w, y)
 
     # Bottom edge
     path.lineTo(x, y)
 
-    # Left zig (upwards)
-    path.lineTo(x + offset, y + step)
-    path.lineTo(x, y + 2 * step)
-    path.lineTo(x + offset, y + 3 * step)
+    # Left side (UP mirrored)
+    path.lineTo(x + zig_depth, y + step)
+    path.lineTo(x, y + 2*step)
+    path.lineTo(x + zig_depth, y + 3*step)
     path.lineTo(x, y + h)
 
     path.close()
