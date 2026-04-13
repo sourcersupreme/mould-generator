@@ -19,23 +19,18 @@ def get_grid(cavities):
 
 
 def draw_zig(c, x, y, w, h):
-    # Accurate 2-peak zig-zag
-
     step = w / 4
 
     path = c.beginPath()
 
-    # Bottom with 2 peaks
     path.moveTo(x, y)
     path.lineTo(x + step, y + h * 0.35)
     path.lineTo(x + 2 * step, y)
     path.lineTo(x + 3 * step, y + h * 0.35)
     path.lineTo(x + w, y)
 
-    # Right side
     path.lineTo(x + w, y + h)
 
-    # Top mirrored
     path.lineTo(x + 3 * step, y + h * 0.65)
     path.lineTo(x + 2 * step, y + h)
     path.lineTo(x + step, y + h * 0.65)
@@ -57,10 +52,8 @@ def draw_plate(c, rows, cols):
     start_x = (page_w - plate_w) / 2
     start_y = (page_h - plate_h) / 2 + 60
 
-    # Outer plate
     c.rect(start_x, start_y, plate_w, plate_h)
 
-    # Draw zig cavities
     for r in range(rows):
         for col in range(cols):
             x = start_x + padding + col * (ZIG_W + gap)
