@@ -22,13 +22,13 @@ def get_grid(cavities):
 # 🔥 CORE: Accurate cavity shape
 def draw_zig_cavity(c, x, y, w, h):
     """
-    Final accurate industrial zig cavity:
-    - vertical dominant edges
-    - small step notches
+    FINAL correct zig:
+    - angled (not steps)
+    - shallow (not triangle)
     - matches real mould
     """
 
-    notch = w * 0.10   # inward cut
+    zig = w * 0.12   # depth
     step = h / 4
 
     path = c.beginPath()
@@ -39,33 +39,19 @@ def draw_zig_cavity(c, x, y, w, h):
     # Top edge
     path.lineTo(x + w, y + h)
 
-    # RIGHT SIDE (down)
-    path.lineTo(x + w, y + h - step)
-    path.lineTo(x + w - notch, y + h - step)
-
-    path.lineTo(x + w - notch, y + h - 2*step)
+    # RIGHT SIDE (smooth angled zig)
+    path.lineTo(x + w - zig, y + h - step)
     path.lineTo(x + w, y + h - 2*step)
-
-    path.lineTo(x + w, y + h - 3*step)
-    path.lineTo(x + w - notch, y + h - 3*step)
-
-    path.lineTo(x + w - notch, y)
+    path.lineTo(x + w - zig, y + h - 3*step)
     path.lineTo(x + w, y)
 
-    # Bottom edge
+    # Bottom
     path.lineTo(x, y)
 
-    # LEFT SIDE (up mirrored)
-    path.lineTo(x, y + step)
-    path.lineTo(x + notch, y + step)
-
-    path.lineTo(x + notch, y + 2*step)
+    # LEFT SIDE (mirror)
+    path.lineTo(x + zig, y + step)
     path.lineTo(x, y + 2*step)
-
-    path.lineTo(x, y + 3*step)
-    path.lineTo(x + notch, y + 3*step)
-
-    path.lineTo(x + notch, y + h)
+    path.lineTo(x + zig, y + 3*step)
     path.lineTo(x, y + h)
 
     path.close()
