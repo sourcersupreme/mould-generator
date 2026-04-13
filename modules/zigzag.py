@@ -22,48 +22,36 @@ def get_grid(cavities):
 # 🔥 CORE: Accurate cavity shape
 def draw_zig_cavity(c, x, y, w, h):
     """
-    FINAL PRODUCTION-LEVEL zig cavity
-    Matches real mould geometry closely
+    FINAL CLEAN VERSION
+    - no internal lines
+    - proper zig edges
+    - clean mould geometry
     """
 
-    zig = w * 0.10   # very shallow like real mould
+    zig = w * 0.10
     step = h / 4
 
     path = c.beginPath()
 
-    # START top-left
+    # START (top-left)
     path.moveTo(x, y + h)
 
-    # TOP edge
+    # TOP
     path.lineTo(x + w, y + h)
 
-    # RIGHT SIDE (controlled industrial zig)
-    path.lineTo(x + w, y + h - step*0.6)
+    # RIGHT SIDE (clean zig)
     path.lineTo(x + w - zig, y + h - step)
-
-    path.lineTo(x + w - zig, y + h - step*2 + step*0.6)
-    path.lineTo(x + w, y + h - step*2)
-
-    path.lineTo(x + w, y + step*0.6)
-    path.lineTo(x + w - zig, y + step)
-
-    path.lineTo(x + w - zig, y + step*2 - step*0.6)
+    path.lineTo(x + w, y + h - 2*step)
+    path.lineTo(x + w - zig, y + h - 3*step)
     path.lineTo(x + w, y)
 
-    # BOTTOM edge
+    # BOTTOM
     path.lineTo(x, y)
 
-    # LEFT SIDE (perfect mirror)
-    path.lineTo(x, y + step*0.6)
+    # LEFT SIDE (mirror)
     path.lineTo(x + zig, y + step)
-
-    path.lineTo(x + zig, y + step*2 - step*0.6)
-    path.lineTo(x, y + step*2)
-
-    path.lineTo(x, y + h - step*0.6)
-    path.lineTo(x + zig, y + h - step)
-
-    path.lineTo(x + zig, y + h - step*2 + step*0.6)
+    path.lineTo(x, y + 2*step)
+    path.lineTo(x + zig, y + 3*step)
     path.lineTo(x, y + h)
 
     path.close()
@@ -87,12 +75,12 @@ def draw_plate(c, rows, cols):
     c.rect(start_x, start_y, plate_w, plate_h)
 
     # Draw cavities
-    for r in range(rows):
-        for col in range(cols):
-            x = start_x + padding + col * (ZIG_W + gap)
-            y = start_y + padding + r * (ZIG_H + gap)
+   for r in range(rows):
+    for col in range(cols):
+        x = start_x + padding + col * (ZIG_W + gap)
+        y = start_y + padding + r * (ZIG_H + gap)
 
-            draw_zig_cavity(c, x, y, ZIG_W, ZIG_H)
+        draw_zig_cavity(c, x, y, ZIG_W, ZIG_H)
 
 
 def generate_zigzag_mould(filename, cavities):
