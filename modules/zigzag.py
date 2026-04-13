@@ -74,7 +74,7 @@ def draw_zig_cavity(c, x, y, w, h):
 def draw_plate(c, rows, cols):
     page_w, page_h = c._pagesize
 
-    gap = 6
+    gap = 8
     padding = 25
 
     # Plate size auto-calculated
